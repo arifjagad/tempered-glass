@@ -1,0 +1,180 @@
+import { PhoneType } from '../types/phoneTypes';
+
+export const phoneData: PhoneType[] = [
+  {
+    "brand": "Samsung",
+    "model": "A01",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/samsung-galaxy-a01"
+  },
+  {
+    "brand": "Samsung",
+    "model": "A01 CORE",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/samsung-galaxy-a01-core"
+  },
+  {
+    "brand": "Samsung",
+    "model": "A02",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/samsung-galaxy-a02"
+  },
+  {
+    "brand": "Samsung",
+    "model": "A02S",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/samsung-galaxy-a02s"
+  },
+  {
+    "brand": "Samsung",
+    "model": "A2 CORE",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/samsung-galaxy-a2-core"
+  },
+  {
+    "brand": "Samsung",
+    "model": "A03",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/samsung-galaxy-a03"
+  },
+  {
+    "brand": "Samsung",
+    "model": "A03S",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/samsung-galaxy-a03s"
+  },
+  {
+    "brand": "Samsung",
+    "model": "A03 CORE",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/samsung-galaxy-a03-core"
+  },
+  {
+    "brand": "Samsung",
+    "model": "M01",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/samsung-galaxy-m01"
+  },
+  {
+    "brand": "Samsung",
+    "model": "M01 CORE",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/samsung-galaxy-m01-core"
+  },
+  {
+    "brand": "Samsung",
+    "model": "M02",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/samsung-galaxy-m02"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi 9A",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/xiaomi-redmi-9a"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi 9C",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/xiaomi-redmi-9c"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi 10A",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/xiaomi-redmi-10a"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "POCO C40",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/xiaomi-poco-c40"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "POCO C65",
+    "screenSize": "",
+    "resolution": "",
+    "screenToBody": "",
+    "dimensions": "",
+    "cameraPosition": "notch",
+    "imageUrl": "",
+    "phonearenaUrl": "https://www.phonearena.com/phones/xiaomi-poco-c65"
+  }
+];
