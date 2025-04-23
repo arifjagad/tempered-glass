@@ -7,7 +7,7 @@ interface PhoneDetailModalProps {
   onClose: () => void;
 }
 
-const PhoneDetailModal: React.FC<PhoneDetailModalProps> = ({ phone, onClose }) => {
+export const PhoneDetailModal: React.FC<PhoneDetailModalProps> = ({ phone, onClose }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

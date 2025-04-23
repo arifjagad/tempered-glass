@@ -21,4 +21,12 @@ export interface PhoneType {
   cameraPosition: CameraPosition;
   imageUrl: string;
   gsmarenaUrl: string;
+  groupId?: string;
+}
+
+export interface PhoneGroup {
+  id: string;
+  name: string;
+  description: string;
+  phones: PhoneType[];
 }
