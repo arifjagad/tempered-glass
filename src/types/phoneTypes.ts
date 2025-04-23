@@ -1,4 +1,15 @@
-export type CameraPosition = 'center' | 'left' | 'right' | 'punch-hole' | 'notch' | 'under-display' | 'unknown';
+export type CameraPosition = 
+  | 'top-bezel'
+  | 'mini-drop'
+  | 'waterdrop'
+  | 'punch-hole'
+  | 'punch-hole-left'
+  | 'punch-hole-right'
+  | 'punch-hole-center'
+  | 'notch'
+  | 'wide-notch'
+  | 'under-display'
+  | 'unknown';
 
 export interface PhoneType {
   brand: string;
@@ -9,5 +20,5 @@ export interface PhoneType {
   dimensions: string;
   cameraPosition: CameraPosition;
   imageUrl: string;
-  phonearenaUrl: string;
+  gsmarenaUrl: string;
 }

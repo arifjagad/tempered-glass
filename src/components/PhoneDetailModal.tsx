@@ -103,7 +103,7 @@ const PhoneDetailModal: React.FC<PhoneDetailModalProps> = ({ phone, onClose }) =
             </div>
             
             <p className="text-sm text-gray-600 mt-2">
-              This information was collected from PhoneArena and processed to identify key specifications. The 
+              This information was collected from GSMArena and processed to identify key specifications. The 
               camera position was determined through image classification based on the phone's appearance.
             </p>
           </div>
@@ -111,12 +111,12 @@ const PhoneDetailModal: React.FC<PhoneDetailModalProps> = ({ phone, onClose }) =
         
         <div className="border-t border-gray-200 p-4 flex justify-between">
           <a 
-            href={phone.phonearenaUrl} 
+            href={phone.gsmarenaUrl} 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
           >
-            View on PhoneArena <ExternalLink className="h-4 w-4 ml-1" />
+            View on GSMArena <ExternalLink className="h-4 w-4 ml-1" />
           </a>
           
           <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm flex items-center">

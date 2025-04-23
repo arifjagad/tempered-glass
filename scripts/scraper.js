@@ -7,174 +7,211 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// List of phones to scrape
-const phones = [
-  { brand: 'Samsung', model: 'A01' },
-  { brand: 'Samsung', model: 'A01 CORE' },
-  { brand: 'Samsung', model: 'A02' },
-  { brand: 'Samsung', model: 'A02S' },
-  { brand: 'Samsung', model: 'A2 CORE' },
-  { brand: 'Samsung', model: 'A03' },
-  { brand: 'Samsung', model: 'A03S' },
-  { brand: 'Samsung', model: 'A03 CORE' },
-  { brand: 'Samsung', model: 'M01' },
-  { brand: 'Samsung', model: 'M01 CORE' },
-  { brand: 'Samsung', model: 'M02' },
-  { brand: 'Xiaomi', model: 'Redmi 9A' },
-  { brand: 'Xiaomi', model: 'Redmi 9C' },
-  { brand: 'Xiaomi', model: 'Redmi 10A' },
-  { brand: 'Xiaomi', model: 'POCO C40' },
-  { brand: 'Xiaomi', model: 'POCO C65' },
-  // Add more phones as needed
+// Phone URLs to scrape
+const PHONE_URLS = [
+  'https://www.gsmarena.com/samsung_galaxy_a01-9999.php',
+  'https://www.gsmarena.com/samsung_galaxy_a01_core-10314.php',
+  'https://www.gsmarena.com/samsung_galaxy_a02s-10603.php',
+  'https://www.gsmarena.com/samsung_galaxy_a02-10708.php',
+  'https://www.gsmarena.com/samsung_galaxy_a2_core-9636.php',
+  'https://www.gsmarena.com/realme_c17-10439.php',
+  'https://www.gsmarena.com/realme_c25-10793.php',
+  'https://www.gsmarena.com/xiaomi_poco_m5-11850.php',
+  'https://www.gsmarena.com/xiaomi_poco_m4_5g-11762.php'
 ];
 
+// Selectors for GSMArena data
+const SELECTORS = {
+  title: 'h1.specs-phone-name-title',
+  image: '.specs-photo-main img',
+  displaySize: 'td[data-spec="displaysize"]',
+  resolution: 'td[data-spec="displayresolution"]',
+  dimensions: 'td[data-spec="dimensions"]',
+  features: 'td[data-spec="displayother"]',
+  displayType: 'td[data-spec="displaytype"]'
+};
+
 /**
- * Formats the phone name for URL
+ * Extracts the screen-to-body ratio from the display size text
  */
-function formatPhoneNameForUrl(brand, model) {
-  const brandFormatted = brand.toLowerCase();
-  let modelFormatted = model
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/\+/g, 'plus');
-  
-  if (brandFormatted === 'samsung') {
-    return `samsung-galaxy-${modelFormatted}`;
-  } else if (brandFormatted === 'xiaomi' && model.toLowerCase().includes('poco')) {
-    return `xiaomi-poco-${modelFormatted.replace('poco-', '')}`;
-  } else if (brandFormatted === 'xiaomi') {
-    return `xiaomi-${modelFormatted}`;
+function extractScreenToBodyRatio(displaySizeText) {
+  const match = displaySizeText.match(/\((~[\d.]+%)/);
+  return match ? match[1].trim() : '';
+}
+
+/**
+ * Extracts the screen size from the display size text
+ */
+function extractScreenSize(displaySizeText) {
+  return displaySizeText.split(',')[0].trim();
+}
+
+/**
+ * Determines camera position based on comprehensive analysis
+ */
+function detectCameraPosition(imageUrl, displayFeatures, displayType, model, screenToBody) {
+  const modelLower = model.toLowerCase();
+  const featuresLower = (displayFeatures || '').toLowerCase();
+  const displayTypeLower = (displayType || '').toLowerCase();
+  const screenToBodyRatio = parseFloat(screenToBody?.replace(/[^0-9.]/g, '') || '0');
+
+  // Check for specific model patterns first
+  if (modelLower.includes('core')) {
+    // Core models typically have traditional bezels
+    return 'top-bezel';
   }
-  
-  return `${brandFormatted}-${modelFormatted}`;
-}
 
-/**
- * Function to detect camera position from image URL
- */
-function detectCameraPosition(imageUrl) {
-  // In a real implementation, you would use image recognition
-  // For now, returning a placeholder based on common patterns
-  if (imageUrl.includes('core')) {
-    return 'top';
+  // Check display type and features
+  if (displayTypeLower.includes('mini-drop') || 
+      featuresLower.includes('mini-drop') ||
+      displayTypeLower.includes('mini drop') || 
+      featuresLower.includes('mini drop')) {
+    return 'mini-drop';
   }
-  
-  return 'notch';
+
+  if (displayTypeLower.includes('waterdrop') || 
+      featuresLower.includes('waterdrop') ||
+      displayTypeLower.includes('water drop') || 
+      featuresLower.includes('water drop') ||
+      displayTypeLower.includes('dewdrop') || 
+      featuresLower.includes('dewdrop')) {
+    return 'waterdrop';
+  }
+
+  if (displayTypeLower.includes('punch hole') || 
+      featuresLower.includes('punch hole') ||
+      displayTypeLower.includes('o-hole') || 
+      featuresLower.includes('o-hole')) {
+    // Check for position specifics
+    if (displayTypeLower.includes('left') || featuresLower.includes('left')) {
+      return 'punch-hole-left';
+    }
+    if (displayTypeLower.includes('right') || featuresLower.includes('right')) {
+      return 'punch-hole-right';
+    }
+    if (displayTypeLower.includes('center') || featuresLower.includes('center')) {
+      return 'punch-hole-center';
+    }
+    return 'punch-hole';
+  }
+
+  if (displayTypeLower.includes('notch') || featuresLower.includes('notch')) {
+    if (displayTypeLower.includes('wide') || featuresLower.includes('wide')) {
+      return 'wide-notch';
+    }
+    return 'notch';
+  }
+
+  // Screen-to-body ratio analysis
+  if (screenToBodyRatio < 75) {
+    return 'top-bezel'; // Older design with significant bezels
+  }
+
+  // Model-specific patterns
+  if (modelLower.includes('a01') || modelLower.includes('a02')) {
+    return 'waterdrop'; // These models typically use waterdrop notches
+  }
+
+  if (modelLower.includes('poco')) {
+    return 'punch-hole-center'; // POCO phones typically use centered punch holes
+  }
+
+  if (modelLower.includes('realme c')) {
+    return 'mini-drop'; // Realme C series typically uses mini-drop notches
+  }
+
+  return 'unknown';
 }
 
 /**
- * Extract text from a specification row
+ * Scrapes phone data from a GSMArena URL
  */
-function extractSpecValue($, row) {
-  return $(row).text().trim();
-}
-
-/**
- * Scrape phone data from PhoneArena
- */
-async function scrapePhoneData(brand, model) {
+async function scrapePhoneData(url) {
   try {
-    const formattedName = formatPhoneNameForUrl(brand, model);
-    const url = `https://www.phonearena.com/phones/${formattedName}`;
-    
-    console.log(`Scraping data for ${brand} ${model} from ${url}`);
+    console.log(`📱 Scraping data from ${url}`);
     
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
     
-    // Get the phone name from the header
-    const fullName = $('.page__section.page__section_quickSpecs_header').text().trim();
-    const extractedBrand = fullName.split(' ')[0];
+    // Extract phone name and brand
+    const fullName = $(SELECTORS.title).text().trim();
+    const brand = fullName.split(' ')[0];
+    const model = fullName.replace(brand, '').trim();
     
-    // Extract display specifications
-    let screenSize = '';
-    let resolution = '';
-    let screenToBody = '';
+    // Get specifications
+    const displaySizeText = $(SELECTORS.displaySize).text();
+    const screenToBody = extractScreenToBodyRatio(displaySizeText);
+    const imageUrl = $(SELECTORS.image).attr('src') || '';
+    const displayFeatures = $(SELECTORS.features).text();
+    const displayType = $(SELECTORS.displayType).text();
     
-    $('.display_cPoint').each((_, element) => {
-      const text = $(element).text().toLowerCase();
-      if (text.includes('size')) {
-        screenSize = extractSpecValue($, element);
-      } else if (text.includes('resolution')) {
-        resolution = extractSpecValue($, element);
-      } else if (text.includes('screen-to-body')) {
-        screenToBody = extractSpecValue($, element);
-      }
-    });
-    
-    // Extract dimensions
-    let dimensions = '';
-    $('.design_cPoint').each((_, element) => {
-      const text = $(element).text().toLowerCase();
-      if (text.includes('dimensions')) {
-        dimensions = extractSpecValue($, element);
-      }
-    });
-    
-    // Get the main phone image
-    const imageUrl = $('.square.gallery-facade-image img').attr('src') || '';
-    
-    // Detect camera position based on image analysis
-    const cameraPosition = detectCameraPosition(imageUrl);
-    
-    return {
-      brand: extractedBrand || brand,
-      model: fullName.replace(extractedBrand, '').trim() || model,
-      screenSize,
-      resolution,
-      screenToBody,
-      dimensions,
-      cameraPosition,
-      imageUrl,
-      phonearenaUrl: url
-    };
-    
-  } catch (error) {
-    console.error(`Error scraping data for ${brand} ${model}:`, error.message);
     return {
       brand,
       model,
-      screenSize: 'N/A',
-      resolution: 'N/A',
-      screenToBody: 'N/A',
-      dimensions: 'N/A',
+      screenSize: extractScreenSize(displaySizeText),
+      resolution: $(SELECTORS.resolution).text().trim(),
+      screenToBody,
+      dimensions: $(SELECTORS.dimensions).text().trim(),
+      cameraPosition: detectCameraPosition(imageUrl, displayFeatures, displayType, model, screenToBody),
+      imageUrl,
+      gsmarenaUrl: url
+    };
+    
+  } catch (error) {
+    console.error(`❌ Error scraping ${url}:`, error.message);
+    return {
+      brand: 'Unknown',
+      model: 'Unknown',
+      screenSize: '',
+      resolution: '',
+      screenToBody: '',
+      dimensions: '',
       cameraPosition: 'unknown',
       imageUrl: '',
-      phonearenaUrl: `https://www.phonearena.com/phones/${formatPhoneNameForUrl(brand, model)}`
+      gsmarenaUrl: url
     };
   }
 }
 
 /**
- * Main function to scrape all phones and save data
+ * Saves data to both JSON and TypeScript files
  */
-async function scrapeAllPhones() {
-  console.log('Starting phone data scraping...');
-  const results = [];
+function saveData(data) {
+  const dataDir = path.join(__dirname, '..', 'src', 'data');
   
-  for (const phone of phones) {
-    const phoneData = await scrapePhoneData(phone.brand, phone.model);
-    results.push(phoneData);
-    // Add a small delay to avoid overloading the server
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  }
+  // Save JSON file
+  const jsonPath = path.join(dataDir, 'scrapedPhoneData.json');
+  fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
+  console.log(`📝 Data saved to ${jsonPath}`);
   
-  // Save the results
-  const dataPath = path.join(__dirname, '..', 'src', 'data', 'scrapedPhoneData.json');
-  fs.writeFileSync(dataPath, JSON.stringify(results, null, 2));
-  
-  console.log(`Scraping complete! Data saved to ${dataPath}`);
-  
-  // Also generate TypeScript file
-  const tsDataPath = path.join(__dirname, '..', 'src', 'data', 'phoneData.ts');
+  // Generate TypeScript file
+  const tsPath = path.join(dataDir, 'phoneData.ts');
   const tsContent = `import { PhoneType } from '../types/phoneTypes';
 
-export const phoneData: PhoneType[] = ${JSON.stringify(results, null, 2)};
+export const phoneData: PhoneType[] = ${JSON.stringify(data, null, 2)};
 `;
-  
-  fs.writeFileSync(tsDataPath, tsContent);
-  console.log(`TypeScript data file generated at ${tsDataPath}`);
+  fs.writeFileSync(tsPath, tsContent);
+  console.log(`📝 TypeScript data generated at ${tsPath}`);
 }
 
-// Run the scraper
+/**
+ * Main function to scrape all phones
+ */
+async function scrapeAllPhones() {
+  console.log('🚀 Starting phone data scraping from GSMArena...');
+  
+  const results = [];
+  
+  for (const url of PHONE_URLS) {
+    const phoneData = await scrapePhoneData(url);
+    results.push(phoneData);
+    // Add delay between requests
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  }
+  
+  saveData(results);
+  console.log('✨ Scraping complete!');
+}
+
+// Execute scraper
 scrapeAllPhones().catch(console.error);
